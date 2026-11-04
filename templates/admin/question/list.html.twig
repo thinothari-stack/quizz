@@ -1,0 +1,136 @@
+<!-- Table with stripped rows -->
+<table id="questionTable" class="table datatable">
+<thead>
+    <tr>
+    <th scope="col">#</th>
+    <th scope="col">Type</th>
+    <th scope="col">Désignation</th>
+    <th scope="col">Action</th>
+    </tr>
+</thead>
+<tbody>
+    {% for question in Question %}
+    <tr>
+    <th scope="row">{% set counter = ( counter | default(0) ) + 1 %}{{ counter }}</th>
+    <td>{{ question.type.designation }}</td>
+    <td>{{ question.designation }}</td>
+    <td>
+        <button type="button" data-bs-target="#editQuestionModal{{ question.id }}" data-bs-toggle="modal" class="btn btn-sm btn-warning">
+            <i class="bi bi-pencil" aria-hidden="true"></i>
+        </button>
+        <div class="modal fade" id="editQuestionModal{{ question.id }}" tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Edition</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3">
+                        <div class="col-12">
+                            <label for="Type{{ question.id }}" class="form-label">Type</label>
+                            <select id="Type{{ question.id }}" class="form-select" name="Type">
+                                <option value="{{ question.type.id }}">{{ question.type.designation }}</option>
+                                {% for type in Type %}
+                                    <option value="{{ type.id }}">{{ type.designation }}</option>
+                                {% endfor %}
+                            </select>
+                            <div id="alert{{ question.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez selectionner le type.</a>
+                            </div>
+                            <label for="designation{{ question.id }}" class="form-label">Désignation</label>
+                            {# <input type="text" class="form-control" id="designation{{ question.id }}" name="designation" value="{{ question.designation }}"> #}
+                            <textarea class="form-control" id="designation{{ question.id }}" name="designation" style="height: 100px;">{{ question.designation }}</textarea>
+                            <div id="alert2{{ question.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la désignation.</a>
+                            </div>
+                        </div>
+                    </form><!-- Vertical Form -->
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="editQuestion('{{ question.id }}')">Editer</button>
+                </div>
+            </div>
+            </div>
+        </div><!-- End Basic Modal-->
+        <button type="button" data-bs-target="#deleteQuestionModal{{ question.id }}" data-bs-toggle="modal" class="btn btn-sm btn-danger">
+            <i class="bi bi-trash" aria-hidden="true"></i>
+        </button>
+        <div class="modal fade" id="deleteQuestionModal{{ question.id }}" tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p><i class="bi bi-exclamation-triangle" aria-hidden="true" style="font-size: 64px; color: orange"></i></p>
+                    <h3>Vous êtes sur ?</h3>
+                    <p>La suppression sera irréversible!</p>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <button type="button" class="btn btn-primary" onclick="deleteQuestion('{{ question.id }}')">Oui</button>
+                </div>
+            </div>
+            </div>
+        </div><!-- End Basic Modal-->
+    </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% block javascripts %}
+<script type="text/javascript">
+    var questionTable = $('#questionTable').DataTable({
+        "ordering": false,
+        "order": [[ 0, "asc" ]],
+        "lengthMenu": [[10, 15, 20, -1], [10, 15, 20, "All"]],
+        responsive: true,
+        dom: 'Bfrtip',
+        // buttons: [
+        //     {
+        //         extend: 'pdfHtml5',
+        //         text: '<i class="icon wb-download" aria-hidden="true"></i> Export en PDF de(s) question(s)',
+        //         title: 'Export de(s) question(s)',
+        //         orientation: 'landscape',
+        //         pageSize: 'LEGAL',
+        //         exportOptions: {
+        //             columns: [0, 1, 2]
+        //         }
+        //         ,
+        //         //-------------------------- 
+        //         customize : function(doc) {
+        //             doc.styles['td:nth-child(2)'] = { 
+        //             width: '200px',
+        //             'max-width': '200px'
+        //             }
+        //         }
+        //     },
+        //     { 
+        //         extend: 'excel', 
+        //         text: '<i class="icon wb-download" aria-hidden="true"></i> Export en Excel de(s) question(s)', 
+        //         title: 'Export de(s) question(s)',
+        //         exportOptions: {
+        //             columns: [0, 1, 2]
+        //         }
+        //     }
+        // ],
+        language: {
+            lengthMenu: "_MENU_",
+            zeroRecords: "Aucun résultat",
+            info: "page _PAGE_ à _PAGES_",
+            infoEmpty: "Pas de question",
+            infoFiltered: "(filtré à partir de _MAX_ enregistrement(s) au total)",
+            search: "_INPUT_",
+            searchPlaceholder: "Recherche",
+            paginate: {
+                "previous": "Précedent",
+                "next": "Suivant"
+            }
+        }
+    });
+</script>
+{% endblock %}
+<!-- End Table with stripped rows -->

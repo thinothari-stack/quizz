@@ -1,0 +1,277 @@
+{% extends "admin/index.html.twig" %}
+{% block title %}Type!{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #image-preview{
+            height:auto;
+            width:auto;
+            max-width: 300px;
+            max-height: 200px;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="pagetitle">
+      <h1>Type(s)</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ path('app_admin') }}">Home</a></li>
+          <li class="breadcrumb-item">Type(s)</li>
+          <li class="breadcrumb-item active">Data</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Liste(s) de(s) type(s)</h5>
+              <div id="info" style="display: none;" class="alert alert-alt alert-success alert-dismissible hidden" role="alert">
+                 <a class="alert-link" href="javascript:void(0)"><strong>INFO: </strong> <span id="msg"></span></a>
+              </div>
+              <!-- Basic Modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTypeModal">
+                    Ajouter
+                </button>
+                <div class="modal fade" id="addTypeModal" tabindex="-1">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title">Type</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="row g-3">
+                                <div class="col-12">
+                                    <label for="designation" class="form-label">Désignation</label>
+                                    <input type="text" class="form-control" id="designation" name="designation">
+                                    <div id="alert" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la désignation.</a>
+                                    </div>
+                                    <label for="image" class="form-label">Image</label>
+                                    <input type="file" accept="image/*" id="image" class="form-control" name="image">
+                                    <div id='img_contain'>
+                                        <img id="image-preview" align='middle'src="" alt="" title=''/>
+                                    </div>
+                                    <div id="alert2" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir l'image.</a>
+                                    </div>
+                                    {# <input type="text" id="qty" placeholder="Quantité"/>
+                                    <button type="button" class="btn btn-primary" id="submit-qty">Add</button> #}
+                                </div>
+                            </form><!-- Vertical Form -->
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="cancelType()" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary" onclick="addType()">Ajouter</button>
+                        </div>
+                    </div>
+                    </div>
+                </div><!-- End Basic Modal-->
+              <div id="viewType"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net/jquery.dataTables.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-bs4/dataTables.bootstrap4.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-responsive/dataTables.responsive.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-responsive-bs4/responsive.bootstrap4.js') }}"></script>
+    <!-- <script src="{{ asset('assets/global/vendor/datatables.net-buttons/dataTables.buttons.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.html5.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.flash.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.print.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.colVis.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons-bs4/buttons.bootstrap4.js') }}"></script> -->
+    <script type="text/javascript">
+        viewType();
+        // $(document).keydown(function(event){
+        //     var keycode = (event.keyCode ? event.keyCode : event.which);
+        //     if(keycode == '13'){
+        //         // console.log('You pressed a "enter" key in somewhere'); 
+        //         $( "#submit-qty" ).trigger( "click" ); 
+        //     }
+        // });
+        // $('#submit-qty').click(function(){
+        //     console.log($('#qty').val());
+        // });
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                $('#image-preview').attr('src', e.target.result);
+                $('#image-preview').hide();
+                $('#image-preview').fadeIn(650);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        function readURLDetail(input, str) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                $('#image-preview'+str).attr('src', e.target.result);
+                $('#image-preview'+str).hide();
+                $('#image-preview'+str).fadeIn(650);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $("#image").change(function() {
+            readURL(this);
+        }); 
+        // $("#image"+str).change(function() {
+        //     readURL(this);
+        // });
+        function viewType() {
+            //Ajax get list type
+            $.ajax({
+                type: "GET",
+                url: "{{ path('app_admin_type_list') }}",
+                error: function() {
+                    console.log('Erreur de connexion');
+                },
+                success: function(data)  {
+                    $("#viewType").html(data);
+                }
+            });
+            //End of Ajax
+        }
+        function addType() {
+            if($('#designation').val() == '') {
+                $("#alert").show("slow").delay(2000).slideUp("slow");
+            }
+            if($("#image")[0].files.length == 0){
+                $("#alert2").show("slow").delay(2000).slideUp("slow");
+            }
+            if(($('#designation').val() != '') && ($("#image")[0].files.length != 0)) {
+                // console.log($('#image')[0].files[0]);
+                typeData = new FormData();
+                typeData.append('designation', $('#designation').val());
+                typeData.append('image', $('#image')[0].files[0]);
+                // Ajax add Type
+                let url = "{{ path('app_admin_type') }}";
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: typeData,
+                    dataType: 'json',
+                    mimeType: 'multipart/form-data',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    error: function(e) {
+                    },
+                    success: function(data)  {
+                        $("#addTypeModal").modal('hide');
+                        $("#info").show("slow").delay(3000).slideUp("slow");
+                        $("#msg").html(data.info);
+                        viewType();
+                        cancelType();
+                    }
+                });
+                // End Ajax add Type
+            }
+        }
+        function detailType(idType){
+            $("#image"+idType).change(function() {
+                readURLDetail(this, idType);
+            });
+            $("#image-preview"+idType).css({"height":"200px","width":"auto","max-height":"200px","max-width":"300px"});
+        }
+        function editType(idType){
+            if($('#designation'+idType).val() == '') {
+                $("#alert"+idType).show("slow").delay(2000).slideUp("slow");
+            }
+            if($("#image"+idType)[0].files.length == 0){
+                $("#alert2"+idType).show("slow").delay(2000).slideUp("slow");
+            }
+            if(($('#designation'+idType).val() != '') && ($("#image"+idType)[0].files.length != 0)) {
+                typeData = new FormData();
+                typeData.append('idType', idType);
+                typeData.append('designation', $('#designation'+idType).val());
+                typeData.append('image', $('#image'+idType)[0].files[0]);
+                //Ajax delete Type
+                let url = "{{ path('app_admin_type_edit') }}";
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: typeData,
+                    dataType: 'json',
+                    mimeType: 'multipart/form-data',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    error: function(e) {
+                    },
+                    /*beforeSend : function(){
+                        $("#loadMe").modal({
+                            backdrop: "static", //remove ability to close modal with click
+                            keyboard: false, //remove option to close with keyboard
+                            show: true //Display loader!
+                        });
+                    },*/
+                    success: function(data)  {
+                        $("#editTypeModal"+idType).modal('hide');
+                        $("#info").show("slow").delay(3000).slideUp("slow");
+                        $("#msg").html(data.info);
+                        viewType();
+                    }/*,
+                    complete: function(){
+                        $("#loadMe").modal("hide");
+                    }*/
+                });
+            }
+        }
+        function deleteType(idType){
+            typeData = new FormData();
+            typeData.append('idType', idType);
+            //Ajax delete Type
+            let url = "{{ path('app_admin_type_delete') }}";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: typeData,
+                dataType: 'json',
+                mimeType: 'multipart/form-data',
+                contentType: false,
+                cache: false,
+                processData: false,
+                error: function(e) {
+                },
+                /*beforeSend : function(){
+                    $("#loadMe").modal({
+                        backdrop: "static", //remove ability to close modal with click
+                        keyboard: false, //remove option to close with keyboard
+                        show: true //Display loader!
+                    });
+                },*/
+                success: function(data)  {
+                    $("#deleteTypeModal"+idType).modal('hide');
+                    $("#info").show("slow").delay(3000).slideUp("slow");
+                    $("#msg").html(data.info);
+                    viewType();
+                }/*,
+                complete: function(){
+                    $("#loadMe").modal("hide");
+                }*/
+            });
+            //End Ajax delete Type
+        }
+        function cancelType(){
+            $('#designation').val('');
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,160 @@
+<!-- Table with stripped rows -->
+<table id="reponseBonusTable" class="table datatable">
+<thead>
+    <tr>
+    <th scope="col">#</th>
+    <th scope="col">Type</th>
+    <th scope="col">Bonus</th>
+    <th scope="col">Désignation</th>
+    <th scope="col">Note</th>
+    <th scope="col">Action</th>
+    </tr>
+</thead>
+<tbody>
+    {% for reponseBonus in ReponseBonus %}
+    <tr>
+    <th scope="row">{% set counter = ( counter | default(0) ) + 1 %}{{ counter }}</th>
+    <td>{{ reponseBonus.type.designation }}</td>
+    <td>{{ reponseBonus.bonus.designation }}</td>
+    <td>{{ reponseBonus.designation }}</td>
+    <td>{{ reponseBonus.note }}</td>
+    <td>
+        <button type="button" onclick="detailReponseBonus('{{ reponseBonus.id }}')" data-bs-target="#editReponseBonusModal{{ reponseBonus.id }}" data-bs-toggle="modal" class="btn btn-sm btn-warning">
+            <i class="bi bi-pencil" aria-hidden="true"></i>
+        </button>
+        <div class="modal fade" id="editReponseBonusModal{{ reponseBonus.id }}" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Edition</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3">
+                        <div class="col-12">
+                            <label for="Type{{ reponseBonus.id }}" class="form-label">Type</label>
+                            <select id="Type{{ reponseBonus.id }}" class="form-select" name="Type">
+                                <option value="{{ reponseBonus.type.id }}">{{ reponseBonus.type.designation }}</option>
+                                {% for type in Type %}
+                                    <option value="{{ type.id }}">{{ type.designation }}({{ type.designation }})</option>
+                                {% endfor %}
+                            </select>
+                            <div id="alert{{ reponseBonus.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez selectionner le type.</a>
+                            </div>
+                            <label for="Bonus{{ reponseBonus.id }}" class="form-label">Bonus</label>
+                            <select id="Bonus{{ reponseBonus.id }}" class="form-select" name="Bonus">
+                                <option value="{{ reponseBonus.bonus.id }}">{{ reponseBonus.bonus.designation }}</option>
+                                {% for bonus in Bonus %}
+                                    <option value="{{ bonus.id }}">{{ bonus.designation }}({{ bonus.designation }})</option>
+                                {% endfor %}
+                            </select>
+                            <div id="alert2{{ reponseBonus.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez selectionner le bonus.</a>
+                            </div>
+                            <label for="designation{{ reponseBonus.id }}" class="form-label">Désignation</label>
+                            {# <input type="text" class="form-control" id="designation{{ reponseBonus.id }}" name="designation" value="{{ reponseBonus.designation }}"> #}
+                            <textarea class="form-control" id="designation{{ reponseBonus.id }}" name="designation" style="height: 100px;">{{ reponseBonus.designation }}</textarea>
+                            <div id="alert3{{ reponseBonus.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la désignation.</a>
+                            </div>
+                            <label for="note{{ reponseBonus.id }}" class="form-label">Note</label>
+                            <input type="text" class="form-control" id="note{{ reponseBonus.id }}" name="note" value="{{ reponseBonus.note }}">
+                            <div id="alert4{{ reponseBonus.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la note.</a>
+                            </div>
+                            <label for="image" class="form-label">Image</label>
+                            <input type="file" accept="image/*" id="image{{ reponseBonus.id }}" class="form-control" name="image" value="{{ reponseBonus.image }}">
+                            <div id='img_contain{{ reponseBonus.id }}'>
+                                <img id="image-preview{{ reponseBonus.id }}" align='middle'src="{{ asset('reponse_bonus') }}/{{ reponseBonus.image }}" alt="" title=''/>
+                            </div>
+                        </div>
+                    </form><!-- Vertical Form -->
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="editReponseBonus('{{ reponseBonus.id }}')">Editer</button>
+                </div>
+            </div>
+            </div>
+        </div><!-- End Basic Modal-->
+        <button type="button" data-bs-target="#deleteReponseBonusModal{{ reponseBonus.id }}" data-bs-toggle="modal" class="btn btn-sm btn-danger">
+            <i class="bi bi-trash" aria-hidden="true"></i>
+        </button>
+        <div class="modal fade" id="deleteReponseBonusModal{{ reponseBonus.id }}" tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p><i class="bi bi-exclamation-triangle" aria-hidden="true" style="font-size: 64px; color: orange"></i></p>
+                    <h3>Vous êtes sur ?</h3>
+                    <p>La suppression sera irréversible!</p>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <button type="button" class="btn btn-primary" onclick="deleteReponseBonus('{{ reponseBonus.id }}')">Oui</button>
+                </div>
+            </div>
+            </div>
+        </div><!-- End Basic Modal-->
+    </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% block javascripts %}
+<script type="text/javascript">
+    var reponseBonusTable = $('#reponseBonusTable').DataTable({
+        "ordering": false,
+        "order": [[ 0, "asc" ]],
+        "lengthMenu": [[10, 15, 20, -1], [10, 15, 20, "All"]],
+        responsive: true,
+        dom: 'Bfrtip',
+        // buttons: [
+        //     {
+        //         extend: 'pdfHtml5',
+        //         text: '<i class="icon wb-download" aria-hidden="true"></i> Export en PDF de(s) réponse bonus(s)',
+        //         title: 'Export de(s) réponse bonus(s)',
+        //         orientation: 'landscape',
+        //         pageSize: 'LEGAL',
+        //         exportOptions: {
+        //             columns: [0, 1, 2, 3, 4]
+        //         }
+        //         ,
+        //         //-------------------------- 
+        //         customize : function(doc) {
+        //             doc.styles['td:nth-child(2)'] = { 
+        //             width: '200px',
+        //             'max-width': '200px'
+        //             }
+        //         }
+        //     },
+        //     { 
+        //         extend: 'excel', 
+        //         text: '<i class="icon wb-download" aria-hidden="true"></i> Export en Excel de(s) réponse bonus(s)', 
+        //         title: 'Export de(s) réponse bonus(s)',
+        //         exportOptions: {
+        //             columns: [0, 1, 2, 3, 4]
+        //         }
+        //     }
+        // ],
+        language: {
+            lengthMenu: "_MENU_",
+            zeroRecords: "Aucun résultat",
+            info: "page _PAGE_ à _PAGES_",
+            infoEmpty: "Pas de réponse bonus",
+            infoFiltered: "(filtré à partir de _MAX_ enregistrement(s) au total)",
+            search: "_INPUT_",
+            searchPlaceholder: "Recherche",
+            paginate: {
+                "previous": "Précedent",
+                "next": "Suivant"
+            }
+        }
+    });
+</script>
+{% endblock %}
+<!-- End Table with stripped rows -->

@@ -1,0 +1,137 @@
+<!-- Table with stripped rows -->
+<table id="contactTable" class="table datatable">
+<thead>
+    <tr>
+    <th scope="col">#</th>
+    <th scope="col">Email</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Téléphone</th>
+    <th scope="col">Action</th>
+    </tr>
+</thead>
+<tbody>
+    {% for contact in Contact %}
+    <tr>
+    <th scope="row">{% set counter = ( counter | default(0) ) + 1 %}{{ counter }}</th>
+    <td>{{ contact.email }}</td>
+    <td>{{ contact.nom }}</td>
+    <td>{{ contact.telephone }}</td>
+    <td>
+        <button type="button" data-bs-target="#editContactModal{{ contact.id }}" data-bs-toggle="modal" class="btn btn-sm btn-warning">
+            <i class="bi bi-pencil" aria-hidden="true"></i>
+        </button>
+        <div class="modal fade" id="editContactModal{{ contact.id }}" tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Edition</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3">
+                        <div class="col-12">
+                            <label for="email{{ contact.id }}" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="email{{ contact.id }}" name="email" value="{{ contact.email }}">
+                            <div id="alert{{ contact.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir l'e-mail.</a>
+                            </div>
+                            <label for="nom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="nom{{ contact.id }}" name="nom" value="{{ contact.nom }}">
+                            <div id="alert2{{ contact.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir le nom.</a>
+                            </div>
+                            <label for="telephone" class="form-label">Téléphone</label>
+                            <input type="text" class="form-control" id="telephone{{ contact.id }}" name="telephone" value="{{ contact.telephone }}">
+                            <div id="alert3{{ contact.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir le téléphone.</a>
+                            </div>
+                        </div>
+                    </form><!-- Vertical Form -->
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="editContact('{{ contact.id }}')">Editer</button>
+                </div>
+            </div>
+            </div>
+        </div><!-- End Basic Modal-->
+        <button type="button" data-bs-target="#deleteContactModal{{ contact.id }}" data-bs-toggle="modal" class="btn btn-sm btn-danger">
+            <i class="bi bi-trash" aria-hidden="true"></i>
+        </button>
+        <div class="modal fade" id="deleteContactModal{{ contact.id }}" tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p><i class="bi bi-exclamation-triangle" aria-hidden="true" style="font-size: 64px; color: orange"></i></p>
+                    <h3>Vous êtes sur ?</h3>
+                    <p>La suppression sera irréversible!</p>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <button type="button" class="btn btn-primary" onclick="deleteContact('{{ contact.id }}')">Oui</button>
+                </div>
+            </div>
+            </div>
+        </div><!-- End Basic Modal-->
+    </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% block javascripts %}
+<script type="text/javascript">
+    var contactTable = $('#contactTable').DataTable({
+        "ordering": false,
+        "order": [[ 0, "asc" ]],
+        "lengthMenu": [[10, 15, 20, -1], [10, 15, 20, "All"]],
+        responsive: true,
+        dom: 'Bfrtip',
+        buttons: [
+            // {
+            //     extend: 'pdfHtml5',
+            //     text: '<i class="ri-file-download-line" aria-hidden="true"></i> Export en PDF de(s) contact(s)',
+            //     title: 'Export de(s) contact(s)',
+            //     orientation: 'landscape',
+            //     pageSize: 'LEGAL',
+            //     exportOptions: {
+            //         columns: [0, 1, 2, 3]
+            //     }
+            //     ,
+            //     //-------------------------- 
+            //     customize : function(doc) {
+            //         doc.styles['td:nth-child(2)'] = { 
+            //         width: '200px',
+            //         'max-width': '200px'
+            //         }
+            //     }
+            // },
+            { 
+                extend: 'excel', 
+                text: '<i class="ri-file-download-line" aria-hidden="true"></i> Export en Excel de(s) contact(s)', 
+                title: 'Export de(s) contact(s)',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
+            }
+        ],
+        language: {
+            lengthMenu: "_MENU_",
+            zeroRecords: "Aucun résultat",
+            info: "page _PAGE_ à _PAGES_",
+            infoEmpty: "Pas de contact",
+            infoFiltered: "(filtré à partir de _MAX_ enregistrement(s) au total)",
+            search: "_INPUT_",
+            searchPlaceholder: "Recherche",
+            paginate: {
+                "previous": "Précedent",
+                "next": "Suivant"
+            }
+        }
+    });
+</script>
+{% endblock %}
+<!-- End Table with stripped rows -->

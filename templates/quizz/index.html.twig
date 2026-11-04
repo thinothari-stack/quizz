@@ -1,0 +1,749 @@
+{% set i = 0 %}
+{% set j = 0 %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    {# <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css"> #}
+    <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}">
+    {# <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"> #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    {# <div class="container mt-4 mb-2 d-flex justify-content-center">
+        <div class="card px-1 py-4">
+            <div class="card-body">
+                <h1 style="font-size: 33px;">Quels sont vos ressources actuelles et vos besoins pour plus de repos ? </h1>
+                <div class="row">
+                    <div class="d-flex align-items-center" style=" height: 50px; border-top: 1px solid #DADCE0; border-bottom: 1px solid #DADCE0; margin-top: 15px;">
+                        <h6 class="my-auto">thinothariniaina@gmail.com <a href="">Changer de compte</a></h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="d-flex align-items-center" style="height: 50px; border-top: 1px solid #DADCE0; border-bottom: 1px solid #DADCE0; margin-top: 15px;">
+                        <h6 class="my-auto" style="color: red;">* Indique une question obligatoire</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> #}
+    <form id="quizz_profile">
+        {# <div class="container mt-5 mb-5 d-flex justify-content-center">
+            <div class="card px-1 py-4">
+                <div class="card-body">
+                    <div class="">
+                        <h6 style="font-size: 16px;">Adresse e-mail <span style="color: red;">*</span></h6>
+                        <div class="form-group" style="margin-top: 30px;">
+                            <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Votre adresse email" required>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div> #}
+
+        <div class="quiz">
+            <div class="slider">
+                <div class="slide active" data-image="{#{{ asset('debut/fond.jpg')}}#}">
+                    <div class="container mt-2 mb-2 d-flex justify-content-center">
+                        <div class="card card-debut">
+                            <div class="card-body">
+                                <div class="" style="margin-top: 5rem;">
+                                    <div class="current-question">
+                                        {# <h1 style="font-size: 50px;">Tempos Repos</h1>
+                                        <h3 style="font-size: 20px;">Démarrer votre test pour comprendre le repos le plus adapté</h3> #}
+                                        {# <h2 style="font-size: 8px;">Démarrer votre test pour comprendre le repos le plus adapté</h2> #}
+                                        {# <div style="margin-bottom: 5px;"></div> #}
+                                        <div class="row">
+                                            <div class="col-md-4 how-img">
+                                                <img src="{{ asset('debut/fond2.png')}}" class="img-fluid" alt=""/>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="text-center">
+                                                    <img src="{{ asset('debut/fond3.png')}}" class="img-fluid" alt="" style="width:30%"/>
+                                                </div>
+                                                <h3>Temps Repos</h3>
+                                                <p class="">Bienvenue dans le royaume de votre repos !</p>
+                                                <p class="">Ce test a pour mission de répondre à lappel de lapprenti sage qui est en vous. Un élan issu d'une curiosité, d'une synchronicité ou d'une quête qui vous place aujourd'hui sur la voie enchantée du repos. Découvrez le nom et les caractéristiques de lélément-esprit qui accompagne vos moments de repos. Repérez vos ressources actuelles et vos potentiels à développer pour répondre à vos besoins de repos. 
+                                                    Il n’y a pas de bonne réponse. Répondez aux questions sans réfléchir, la première réponse qui vous vient à lesprit sera la plus représentative de votre situation actuelle. Le résultat dépend du moment, il peut varier au cours du temps en fonction de votre évolution personnelle.
+                                                </p>
+                                                <p class="">
+                                                    Parmi les résultats, 8 éléments-esprits qui correspondent à 8 façons différentes d'appréhender le repos. Chaque élément-esprit dispose de caractéristiques propres qui varient selon les niveaux de votre force mentale et des ressources actuelles de vos trois corps : physiologique, émotionnel et subtil. 
+                                                    Des idées d'actions adaptées à votre profil guideront votre apprenti sage intérieur vers un repos plus complet et plus équilibré. Avec la pratique, observez votre élément-esprit se transformer et se renforcer. Sentez la magie du repos opérer dans votre vie, pour le plus grand bonheur de votre énergie. 
+                                                    Plus tard, vous pouvez repasser le test et découvrir un nouvel élément-esprit plus évolué avec des nouveaux pouvoirs-ressources à développer.
+                                                </p>
+                                                <button type="button" id="next" class="next-button btn btn-primary pull-right">Commencer le test</button>  
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                    {# <div class="container mt-2 mb-2 d-flex justify-content-center">
+                        <div class="card px-0 py-0">
+                            <div class="card-body">
+                                <div class="" style="margin-top: 0px;">
+                                    <div class="">
+                                        <div style="margin-bottom: 0px;"></div>
+                                        <div class="row">
+                                            <div class="">
+                                                <button type="button" id="next" class="next-button btn btn-primary pull-right">Commencer le test</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div> #}
+                </div>
+                
+                    {# <div class="slide {% if loop.index == 1 %}active{% endif %}" data-image="{{ question.image }}"> #}
+                    <div class="slide" data-image="{#{{ asset('type')}}/{{ type.image }}#}">
+                        <div class="container mt-2 mb-2 d-flex justify-content-center">
+                            <div class="card card-milieu">
+                                <div class="card-body">
+                                    <div class="inner-slider-2">
+                                    <div class="current-question">
+                                    <div class="row">
+                                    <div class="col-md-4">
+                                        <img src="{{ asset('milieu/fond2.png') }}" class="img-fluid" alt="">
+                                    </div>
+                                    <div class="col-md-8">
+                                    <div class="text-center">
+                                        <img src="{{ asset('debut/fond3.png')}}" class="img-fluid" alt="" style="width:30%"/>
+                                    </div>
+                                    <br>
+                                    <p><b>Quels sont vos ressources actuelles et vos besoins pour plus de repos ?</b></p>
+                                    {% for type in Type|slice(0, -1) %}
+                                        {% if type.designation != 'Autre' %}
+                                            {% for quizz in type.type %}
+                                                {# <div class="" style="margin-top: 5px;"> #}
+                                                    {# <div class="current-question"> #}
+                                                        <h6 style="font-size: 16px;">{{ quizz.designation }}</h6>
+                                                        <div style="margin-bottom: 10px;"></div>
+                                                        <div class="form-check">
+                                                            {% for qq in quizz.question %}
+                                                                <div class="row">
+                                                                    {% if qq.image != '' or qq.image != null %}
+                                                                        <img width='50' src="{{ asset('reponse') }}/{{ qq.image }}" alt="..." class="">
+                                                                    {% endif %}
+                                                                    <div class="">
+                                                                        <input class="form-check-input" type="radio" name="flexRadioDefault{{quizz.id}}" id="{{qq.id}}" value="{{qq.question.type.designation}}-{{qq.note}}" {#{% if i==0 %}checked{% endif %}#}>
+                                                                        <label class="form-check-label" for="flexRadioDefault">
+                                                                            {{ qq.designation }}
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                {% set i = i + 1 %}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {# </div> #}
+                                                {# </div> #}
+                                            {% set i = 0 %}
+                                            {% endfor %}
+                                            {# <div class="container mt-2 mb-2 d-flex justify-content-center">
+                                                <div class="card px-0 py-0">
+                                                    <div class="card-body">
+                                                        <div class="" style="margin-top: 0px;">
+                                                            <div class="">
+                                                                <div style="margin-bottom: 0px;"></div>
+                                                                <div class="row">
+                                                                    <div class="">
+                                                                        <button type="button" id="prev" class="prev-button btn btn-primary pull-left">Précedent</button>
+                                                                        <button type="button" id="next" class="next-button btn btn-primary pull-right">Suivant</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                            </div> #}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% for bonus in Bonus %}
+                                        {# <div class="container mt-2 mb-2 d-flex justify-content-center">
+                                            <div class="card px-1 py-1">
+                                                <div class="card-body"> #}
+                                                    <div class="" style="margin-top: 5px;">
+                                                        <div class="">
+                                                            <h6 style="font-size: 16px;">{{ bonus.designation }}</h6>
+                                                            <div style="margin-bottom: 10px;"></div>
+                                                            <div class="form-check">
+                                                                <div class="row">
+                                                                    {% for bo in bonus.bonus %}
+                                                                        <div class="col-md-6 col-lg-6 col-sm-6">
+                                                                            {% if bo.image != '' or bo.image != null %}
+                                                                                <img width='250' src="{{ asset('reponse_bonus') }}/{{ bo.image }}" alt="..." class="">
+                                                                            {% endif %}
+                                                                                <div class="">
+                                                                                    <input class="form-check-input" type="radio" name="flexRadioDefaultBonus{{bonus.id}}" id="flexRadioDefault2" {% if bo.type!= '' or bo.type!= null %} value="{{bo.type.designation}}-{{bo.note}}" {% else %} value="0" {% endif %} {#{% if j==0 %}checked{% endif %}#}>
+                                                                                    <label class="form-check-label" for="flexRadioDefault2">
+                                                                                        {{ bo.designation }}
+                                                                                    </label>
+                                                                                </div>
+                                                                        </div>
+                                                                        {% set j = j + 1 %}
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {# </div>
+                                            </div> 
+                                        </div> #}
+                                        {% set j = 0 %}
+                                    {% endfor %}
+                                    <div class="mt-2">
+                                        <button type="button" id="prev" class="prev-button btn btn-primary pull-left">Précedent</button>
+                                        <button type="button" id="next" class="next-button btn btn-primary pull-right">Suivant</button>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                        {# <div class="container mt-2 mb-2 d-flex justify-content-center">
+                            <div class="card px-0 py-0">
+                                <div class="card-body">
+                                    <div class="" style="margin-top: 0px;">
+                                        <div class="">
+                                            <div style="margin-bottom: 0px;"></div>
+                                            <div class="row">
+                                                <div class="">
+                                                    <button type="button" id="prev" class="prev-button btn btn-primary pull-left">Précedent</button>
+                                                    <button type="button" id="next" class="next-button btn btn-primary pull-right">Suivant</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div> #}
+                    
+                
+                    {# <div class="slide" data-image="{{ asset('fin/fond.jpg') }}"> #}
+                        {# {% for bonus in Bonus %}
+                            <div class="container mt-2 mb-2 d-flex justify-content-center">
+                                <div class="card px-1 py-1">
+                                    <div class="card-body">
+                                        <div class="" style="margin-top: 5rem;">
+                                            <div class="">
+                                                <h6 style="font-size: 16px;">{{ bonus.designation }}</h6>
+                                                <div style="margin-bottom: 10px;"></div>
+                                                <div class="form-check">
+                                                    <div class="row">
+                                                        {% for bo in bonus.bonus %}
+                                                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                                                {% if bo.image != '' or bo.image != null %}
+                                                                    <img width='250' src="{{ asset('reponse_bonus') }}/{{ bo.image }}" alt="..." class="">
+                                                                {% endif %}
+                                                                    <div class="">
+                                                                        <input class="form-check-input" type="radio" name="flexRadioDefaultBonus{{bonus.id}}" id="flexRadioDefault2" {% if bo.type!= '' or bo.type!= null %} value="{{bo.type.designation}}-{{bo.note}}" {% else %} value="0" {% endif %} {% if j==0 %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="flexRadioDefault2">
+                                                                            {{ bo.designation }}
+                                                                        </label>
+                                                                    </div>
+                                                            </div>
+                                                            {% set j = j + 1 %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+                            {% set j = 0 %}
+                        {% endfor %}
+                        <div class="container mt-2 mb-2 d-flex justify-content-center">
+                            <div class="card px-0 py-0">
+                                <div class="card-body">
+                                    <div class="" style="margin-top: 0px;">
+                                        <div class="">
+                                            <div style="margin-bottom: 0px;"></div>
+                                            <div class="row">
+                                                <div class="">
+                                                    <button type="button" id="prev" class="prev-button btn btn-primary pull-left">Précedent</button>
+                                                    <button type="button" id="next" class="next-button btn btn-primary pull-right">Suivant</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div> #}
+                    {# </div> #}
+                </div>
+                
+                <div class="slide" data-image="{#{{ asset('fin/fond.jpg')}}#}">
+                    <div class="container mt-2 mb-2 d-flex justify-content-center">
+                        <div class="card card-fin">
+                            <div class="card-body">
+                                <div id="info" style="display: none;" class="alert alert-alt alert-success alert-dismissible hidden" role="alert">
+                                    <a class="alert-link" href="javascript:void(0)"><strong>INFO: </strong> <span id="msg"></span></a>
+                                </div>
+                                <div class="" style="margin-top: 5px;">
+                                    <div class="current-question">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <img src="{{ asset('fin/fond2.png') }}" class="img-fluid" alt="">
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="text-center">
+                                                    <img src="{{ asset('debut/fond3.png')}}" class="img-fluid" alt="" style="width:30%"/>
+                                                </div>
+                                                <p style="font-size: 20px;">Bravo vous êtes: </span><span id="viewResultDesignation" class="result"></span></p>
+                                                <div id="viewResultImage" class="col-md-4"></div> <br>
+                                                <p style="font-size: 16px;">Pour recevoir votre profil complet par mail, veuillez remplir le formulaire suivant :</p>
+                                                <div style="margin-bottom: 10px;"></div>
+
+                                                {# <div class="row"> #}
+                                                    {# {% if qq.image != '' or qq.image != null %}
+                                                        <img width='50' src="{{ asset('reponse') }}/{{ qq.image }}" alt="..." class="">
+                                                    {% endif %} #}
+                                                    <div class="">
+                                                        <label for="nom" class="form-input-label">Nom et prénom<span class="label-required">*</span></label>
+                                                        <input type="text" name="nom" class="form-control border border-danger" id="nom" placeholder="Nom et prénom">
+                                                        <div id="alert" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                                            <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir le nom et prénom.</a>
+                                                        </div>
+                                                        <label for="email" class="form-input-label">Email<span class="label-required">*</span></label>
+                                                        <input type="email" name="email" class="form-control border border-danger" id="email" aria-describedby="emailHelp" placeholder="Email">
+                                                        <div id="alert2" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                                            <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir l'e-mail.</a>
+                                                        </div>
+                                                        <label for="telephone" class="form-input-label">Téléphone<span class="label-required">*</span></label>
+                                                        <input type="text" name="telephone" class="form-control border border-danger" id="telephone" placeholder="Téléphone">
+                                                        <div id="alert3" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                                            <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir le téléphone.</a>
+                                                        </div>
+                                                        <div class="mt-2" style="margin-top: 2rem !important;">
+                                                            <button type="button" id="next" class="next-button btn btn-secondary pull-left">Recommencer le test</button>
+                                                            <button type="button" id="send" class="send-button btn btn-primary pull-right">Recevoir mon profil</button>
+                                                        </div>
+                                                    </div>
+                                                {# </div> #}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                    {# <div class="container mt-2 mb-2 d-flex justify-content-center">
+                        <div class="card card-fin">
+                            <div class="card-body">
+                                <div id="info" style="display: none;" class="alert alert-alt alert-success alert-dismissible hidden" role="alert">
+                                    <a class="alert-link" href="javascript:void(0)"><strong>INFO: </strong> <span id="msg"></span></a>
+                                </div>
+                                <div class="form-contact" style="margin-top: 5px;">
+                                    <div class="current-question">
+                                        <h6 style="font-size: 16px;">Pour recevoir votre profil complet par mail, veuillez remplir le formulaire suivant :</h6>
+                                        <div style="margin-bottom: 10px;"></div>
+
+                                        <div class="row">
+                                            <div class="">
+                                                <input type="text" name="nom" class="form-control" id="nom" placeholder="Nom et prénom">
+                                                <div id="alert" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                                    <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir le nom et prénom.</a>
+                                                </div>
+                                                <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Email">
+                                                <div id="alert2" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                                    <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir l'e-mail.</a>
+                                                </div>
+                                                <input type="text" name="telephone" class="form-control" id="telephone" placeholder="Téléphone">
+                                                <div id="alert3" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                                    <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir le téléphone.</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="container mt-2 mb-2 d-flex justify-content-center">
+                        <div class="card px-0 py-0">
+                            <div class="card-body">
+                                <div class="" style="margin-top: 0px;">
+                                    <div class="">
+                                        <div style="margin-bottom: 0px;"></div>
+                                        <div class="row">
+                                            <div class="">
+                                                <button type="button" id="next" class="next-button btn btn-primary pull-left">Recommencer le test</button>
+                                                <button type="button" id="send" class="send-button btn btn-primary pull-right">Recevoir</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div> #}
+                </div>
+            </div>
+        </div>
+
+        {# {% for quizz in Quizz %}
+        <div class="container mt-2 mb-2 d-flex justify-content-center">
+            <div class="card px-1 py-1">
+                <div class="card-body">
+                    <div class="" style="margin-top: 5px;">
+                        <div class="">
+                            <h6 style="font-size: 16px;">{{ quizz.designation }}</h6>
+                            <div style="margin-bottom: 10px;"></div>
+                            <div class="form-check">
+                                {% for qq in quizz.question %}
+                                <div class="row">
+                                    <div class="">
+                                        <input class="form-check-input" type="radio" name="flexRadioDefault{{quizz.id}}" id="flexRadioDefault2" value="{{qq.question.type.designation}}-{{qq.note}}" {% if i==0 %}checked{% endif %}>
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            {{ qq.designation }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% set i = i + 1 %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        {% set i = 0 %}
+        {% endfor %} #}
+
+        {# {% for bonus in Bonus %}
+        <div class="container mt-2 mb-2 d-flex justify-content-center">
+            <div class="card px-1 py-1">
+                <div class="card-body">
+                    <div class="" style="margin-top: 5px;">
+                        <div class="">
+                            <h6 style="font-size: 16px;">{{ bonus.designation }}</h6>
+                            <div style="margin-bottom: 10px;"></div>
+                            <div class="form-check">
+                                <div class="row">
+                                {% for bo in bonus.bonus %}
+                                    <div class="col-md-6 col-lg-6 col-sm-6">
+                                        {% if bo.image != '' or bo.image != null %}
+                                            <img width='250' src="{{ asset('reponse') }}/{{ bo.image }}" alt="..." class="">
+                                        {% endif %}
+                                            <div class="">
+                                                <input class="form-check-input" type="radio" name="flexRadioDefaultBonus{{bonus.id}}" id="flexRadioDefault2" {% if bo.type!= '' or bo.type!= null %} value="{{bo.type.designation}}-{{bo.note}}" {% else %} value="0" {% endif %} {% if j==0 %}checked{% endif %}>
+                                                <label class="form-check-label" for="flexRadioDefault2">
+                                                    {{ bo.designation }}
+                                                </label>
+                                            </div>
+                                    </div>
+                                    {% set j = j + 1 %}
+                                {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        {% set j = 0 %}
+        {% endfor %}
+
+        <div class="container mt-2 mb-2">
+            <div class="row">
+                <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12"></div>
+                <div class="col-md-4 col-lg-5 col-sm-12 col-xs-12"><button style="background-color: #734ABC; color: white;" class="btn btn-primary">Envoyer</button></div>
+                <div class="col-md-5 col-lg-4 col-sm-12 col-xs-12"></div>
+            </div>
+        </div> #}
+    </form>
+</body>
+<style>
+    body{
+        /* background-color:#F0EBF8; */
+        height: 100%;
+        width: 100%;
+        /* background: url('path/to/file.png') no-repeat; */
+        background-position: 50% 50%;
+        background-size: 1920px 1080px;
+        
+    }
+    .card{width:650px;background-color:#fff;border:none;border-radius: 12px}label.radio{cursor: pointer;width: 100%}label.radio input{position: absolute;top: 0;left: 0;visibility: hidden;pointer-events: none}label.radio span{padding: 7px 14px;border: 2px solid #eee;display: inline-block;color: #039be5;border-radius: 10px;width: 100%;height: 48px;line-height: 27px}label.radio input:checked+span{border-color: #039BE5;background-color: #81D4FA;color: #fff;border-radius: 9px;height: 48px;line-height: 27px}.form-control{    margin-top: 0.5rem;
+    margin-bottom: 1.2rem;height: 48px;border: 2px solid #eee;border-radius: 10px}.form-control:focus{box-shadow: none;border: 2px solid #039BE5}.agree-text{font-size: 12px}.terms{font-size: 12px;text-decoration: none;color: #039BE5}.confirm-button{height: 50px;border-radius: 10px}
+    .form-check-input:checked {
+        background-color: #CF1860;
+        border-color: #CF1860;
+    }
+    .form-check {
+        margin-bottom: 1.5rem;
+    }
+    .form-check .row ~ .row {
+        margin-top: 5px;
+    }
+    .form-check .row > div {
+        margin-top: 6px;
+    }
+    h3,h6,.result,.label-required {
+        color: #CF1860
+    }
+    .card-debut{
+        width: 1200px;
+    }
+    .card-milieu{
+        width: 1200px;
+    }
+    .card-fin{
+        width: 1200px;
+    }
+    .border-danger {
+        --bs-border-opacity: 1;
+        border-color: rgba(var(--bs-code-color),var(--bs-border-opacity))!important;
+    }
+    .border {
+        border: var(--bs-border-width) var(--bs-border-style) var(--bs-code-color)!important;
+    }
+</style>
+<style>
+    .slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: auto;
+        right: auto;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        overflow: scroll;
+        background-color: #fff;
+        transform: translateY(100%);
+        -webkit-transform: translateY(100%);
+        -moz-transform: translateY(100%);
+        transition: all 400ms ease-in;
+        -webkit-transition: all 400ms ease-in;
+        -moz-transition: all 400ms ease-in;
+    }
+    .slide.active {
+        z-index: 99;
+        transform: translateY(0px);
+        -webkit-transform: translateY(0px);
+        -moz-transform: translateY(0px);
+    }
+    .slider {
+        position: relative;
+        overflow: hidden;
+        min-height: 100vh;
+    }
+    .col-md-8 > .text-center {
+        margin: 0 0 2rem;
+    }
+    .how-img {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+    /*.img-fluid{
+        margin-top: -6px;
+    }*/
+    .col-md-8 {
+        padding: 1vw 3vw;
+        /*margin-left: 0 !important;
+        margin-right: 0 !important;*/
+    }
+    .inner-slider-2{
+        position:relative;
+        top: 17vw;
+    }
+    .mt-2 {
+        margin-top: 2rem !important;
+    }
+    button#next, button#send, button#prev {
+        margin-top: 1rem;
+    }
+    /* .container {
+        margin: 0 !important;
+    }*/
+
+    /*.card {
+        margin: 0 !important;
+    }*/
+
+    /*.card-body {
+        margin: 0 !important;
+        padding: 0 !important;
+    }*/
+   /* .current-question {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        height: 96vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }*/
+    /*.row>* {
+        padding-left: 0 !important;
+    }*/
+    @media screen and (max-width:1500px){
+        .inner-slider-2 {
+            top: 68vh;
+            padding-bottom: 4rem;
+        }
+        .col-md-8 > .text-center {
+            margin: 0 0 15px;
+        }
+    }
+</style>
+<script src="{{ asset('assets/js/jquery.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        // $("body").css({ opacity: 0.7 });
+        const slider = $(".slider");
+        const slides = slider.find(".slide");
+        let currentIndex = 0;
+        const transitionDuration = 2000; // Animation duration in milliseconds
+        const prevButton = $(".prev-button");
+        const nextButton = $(".next-button");
+
+        const sendButton = $(".send-button")
+
+        const slides1 = slider.find(".slide1");
+        slides1.hide();
+
+        function showCurrentSlide() {
+             $(".slide.active").animate({ scrollTop: 0 }, "slow");
+             $("html, body").animate({ scrollTop: 0 }, "slow");
+            slides.removeClass('active');
+            slides.eq(currentIndex).addClass('active');
+            // slides.slideUp("slow").delay(1000).eq(currentIndex).slideDown("slow").delay(1000);
+            // slides.removeClass("active");
+            // slides.eq(currentIndex).addClass("active");
+            // const currentQuestion = slides.eq(currentIndex);
+            // const image = currentQuestion.data("image");
+            // $("body").animate({ opacity: 0 }, transitionDuration, function() {
+            //     $(this).css("background-image", `url(${image})`).animate({ opacity: 1 }, transitionDuration);
+            // });
+            // const body = $("body");
+            // body.fadeOut(transitionDuration, function() {
+            //     body.css("background-image", `url(${image})`).fadeIn(transitionDuration);
+            // });
+        }
+
+        function showNextSlide() {
+            // if ($('#quizz_profile').find('input:checked').length > 0) {
+                currentIndex = (currentIndex + 1) % slides.length;
+                slideCount = slides.length - 1;
+                if (slideCount == currentIndex) {
+                    ajaxPartResult();
+                    // const currentQuestion = slides.eq(currentIndex);
+                    // const image = currentQuestion.data("image");
+                    // $("body").animate({ opacity: 0 }, transitionDuration, function() {
+                    //     $(this).css("background-image", `url(${image})`).animate({ opacity: 1 }, transitionDuration);
+                    // });
+                    // const body = $("body");
+                    // body.fadeOut(transitionDuration, function() {
+                    //     body.css("background-image", `url(${image})`).fadeIn(transitionDuration);
+                    // });
+                }
+                // slider.animate({ marginLeft: -(currentIndex * 100) + "%" });
+                showCurrentSlide();
+            // } else {
+            //     console.log('vide');
+            // }
+        }
+
+        function showPreviousSlide() {
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            // slider.animate({ marginLeft: -(currentIndex * 100) + "%" });
+            showCurrentSlide();
+        }
+
+        nextButton.on("click", showNextSlide);
+        prevButton.on("click", showPreviousSlide);
+
+        showCurrentSlide();
+
+        function cancelInfos() {
+            $('#nom').val('');
+            $('#email').val('');
+            $('#telephone').val('');
+        }
+
+        function ajaxPartResult(){
+            var formData = new FormData();
+            $('#quizz_profile').find('input[type="radio"]:checked').each(function() {
+                var serializedData = $(this).serializeArray();
+                $.each(serializedData, function(index, field) {
+                    formData.append(field.name, field.value);
+                });
+            });
+            let url = "{{ path('app_quizz_result') }}";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: formData,
+                dataType: 'json',
+                mimeType: 'multipart/form-data',
+                contentType: false,
+                cache: false,
+                processData: false,
+                error: function(e) {
+                    console.log('erreur');
+                },
+                success: function(data)  {
+                    $('#viewResultDesignation').html(data.profil);
+                    var id = data.profil_id;
+                    var urlPicture = '{{ path('app_admin_profil_ajax', {'id': 'id'}) }}';
+                    urlPicture = urlPicture.replace("id", id);
+                    // console.log(urlPicture);
+                    $.getJSON(urlPicture, function(data) {
+                        $('#viewResultImage').html("<img width='50%' src="+data.path+" alt="+data.image+" class=''>");
+                    });
+                    sendButton.on('click', function(){
+                        if($('#nom').val() == '') {
+                            $("#alert").show("slow").delay(2000).slideUp("slow");
+                        }
+                        if($('#email').val() == '') {
+                            $("#alert2").show("slow").delay(2000).slideUp("slow");
+                        }
+                        if($('#telephone').val() == '') {
+                            $("#alert3").show("slow").delay(2000).slideUp("slow");
+                        }
+                        if(($('#nom').val() != '') && ($('#email').val() != '') && ($('#telephone').val() != '')) {
+                            formData2 = new FormData();
+                            formData2.append('nom', $('#nom').val());
+                            formData2.append('email', $('#email').val());
+                            formData2.append('telephone', $('#telephone').val());
+                            formData2.append('profil_id', data.profil_id);
+                            let url = "{{ path('app_quizz_send') }}";
+                            $.ajax({
+                                type: "POST",
+                                url: url,
+                                data: formData2,
+                                dataType: 'json',
+                                mimeType: 'multipart/form-data',
+                                contentType: false,
+                                cache: false,
+                                processData: false,
+                                error: function(e) {
+                                    console.log('erreur');
+                                },
+                                success: function(data)  {
+                                    cancelInfos();
+                                    $("#info").show("slow").delay(3000).slideUp("slow");
+                                    $("#msg").html(data.info);
+                                    // $(".form-contact").slideUp("slow");
+                                    // console.log(data.pdf)
+                                }
+                            });
+                        }
+                    }); 
+                }
+            });
+        }
+
+    });
+</script>
+</html>

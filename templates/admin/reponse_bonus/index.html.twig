@@ -1,0 +1,307 @@
+{% extends "admin/index.html.twig" %}
+{% block title %}Réponse bonus!{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #image-preview{
+            height:200px;
+            width:auto;
+            max-width: 300px;
+            max-height: 200px;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="pagetitle">
+      <h1>Réponse(s) bonus</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ path('app_admin') }}">Home</a></li>
+          <li class="breadcrumb-item">Réponse(s) bonus</li>
+          <li class="breadcrumb-item active">Data</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Liste(s) de(s) Réponse(s) bonus</h5>
+              <div id="info" style="display: none;" class="alert alert-alt alert-success alert-dismissible hidden" role="alert">
+                 <a class="alert-link" href="javascript:void(0)"><strong>INFO: </strong> <span id="msg"></span></a>
+              </div>
+              <!-- Basic Modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReponseBonusModal">
+                    Ajouter
+                </button>
+                <div class="modal fade" id="addReponseBonusModal" tabindex="-1">
+                    <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title">Réponse bonus</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="row g-3">
+                                <div class="col-12">
+                                    <label for="Type" class="form-label">Type</label>
+                                    <select id="Type" class="form-select" name="Type">
+                                        {% for type in Type %}
+                                            <option value="{{ type.id }}">{{ type.designation }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div id="alert" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez selectionner le type.</a>
+                                    </div>
+                                    <label for="Bonus" class="form-label">Bonus</label>
+                                    <select id="Bonus" class="form-select" name="Bonus">
+                                        {% for bonus in Bonus %}
+                                            <option value="{{ bonus.id }}">{{ bonus.designation }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div id="alert2" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez selectionner le bonus.</a>
+                                    </div>
+                                    <label for="designation" class="form-label">Désignation</label>
+                                    {# <input type="text" class="form-control" id="designation" name="designation"> #}
+                                    <textarea class="form-control" id="designation" name="designation" style="height: 100px;"></textarea>
+                                    <div id="alert3" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la désignation.</a>
+                                    </div>
+                                    <label for="note" class="form-label">Note</label>
+                                    <input type="text" class="form-control" id="note" name="note">
+                                    <div id="alert4" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la note.</a>
+                                    </div>
+                                    <label for="image" class="form-label">Image</label>
+                                    <input type="file" accept="image/*" id="image" class="form-control" name="image">
+                                    <div id='img_contain'>
+                                        <img id="image-preview" align='middle'src="" alt="" title=''/>
+                                    </div>
+                                </div>
+                            </form><!-- Vertical Form -->
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="cancelReponseBonus()" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary" onclick="addReponseBonus()">Ajouter</button>
+                        </div>
+                    </div>
+                    </div>
+                </div><!-- End Basic Modal-->
+              <div id="viewReponseBonus"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net/jquery.dataTables.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-bs4/dataTables.bootstrap4.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-responsive/dataTables.responsive.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-responsive-bs4/responsive.bootstrap4.js') }}"></script>
+    <!-- <script src="{{ asset('assets/global/vendor/datatables.net-buttons/dataTables.buttons.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.html5.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.flash.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.print.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.colVis.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons-bs4/buttons.bootstrap4.js') }}"></script> -->
+    <script type="text/javascript">
+        viewReponseBonus();
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                $('#image-preview').attr('src', e.target.result);
+                $('#image-preview').hide();
+                $('#image-preview').fadeIn(650);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        function readURLDetail(input, str) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                $('#image-preview'+str).attr('src', e.target.result);
+                $('#image-preview'+str).hide();
+                $('#image-preview'+str).fadeIn(650);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $("#image").change(function() {
+            readURL(this);
+        });
+        function viewReponseBonus() {
+            //Ajax get list ReponseBonus
+            $.ajax({
+                type: "GET",
+                url: "{{ path('app_admin_reponse_bonus_list') }}",
+                error: function() {
+                    console.log('Erreur de connexion');
+                },
+                success: function(data)  {
+                    $("#viewReponseBonus").html(data);
+                }
+            });
+            //End of Ajax
+        }
+        function addReponseBonus () {
+            if($('#Type').val() == '') {
+                $("#alert").show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#Bonus').val() == '') {
+                $("#alert2").show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#designation').val() == '') {
+                $("#alert3").show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#note').val() == '') {
+                $("#alert4").show("slow").delay(2000).slideUp("slow");
+            }
+            if(($('#Type').val() != '') && ($('#Bonus').val() != '')  && ($('#designation').val() != '') && ($('#note').val() != '')) {
+                reponseBonusData = new FormData();
+                reponseBonusData.append('Type', $('#Type').val());
+                reponseBonusData.append('Bonus', $('#Bonus').val());
+                reponseBonusData.append('designation', $('#designation').val());
+                reponseBonusData.append('note', $('#note').val());
+                if($("#image")[0].files.length != 0){
+                    reponseBonusData.append('image', $('#image')[0].files[0]);
+                }
+                //Ajax add Reponse
+                let url = "{{ path('app_admin_reponse_bonus') }}";
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: reponseBonusData,
+                    dataType: 'json',
+                    mimeType: 'multipart/form-data',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    error: function(e) {
+                    },
+                    success: function(data)  {
+                        $("#addReponseBonusModal").modal('hide');
+                        $("#info").show("slow").delay(3000).slideUp("slow");
+                        $("#msg").html(data.info);
+                        viewReponseBonus();
+                        cancelReponseBonus();
+                    }
+                });
+                //End Ajax add ReponseBonus
+            }
+        }
+        function detailReponseBonus(idReponseBonus){
+            $("#image"+idReponseBonus).change(function() {
+                readURLDetail(this, idReponseBonus);
+            });
+            $("#image-preview"+idReponseBonus).css({"height":"200px","width":"auto","max-height":"200px","max-width":"300px"});
+        }
+        function editReponseBonus(idReponseBonus){
+            if($('#Type'+idReponseBonus).val() == '') {
+                $("#alert"+idReponseBonus).show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#Bonus'+idReponseBonus).val() == '') {
+                $("#alert2"+idReponseBonus).show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#designation'+idReponseBonus).val() == '') {
+                $("#alert3"+idReponseBonus).show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#note'+idReponseBonus).val() == '') {
+                $("#alert4"+idReponseBonus).show("slow").delay(2000).slideUp("slow");
+            }
+            if(($('#Type'+idReponseBonus).val() != '') && ($('#Bonus'+idReponseBonus).val() != '') && ($('#designation'+idReponseBonus).val() != '') && ($('#note'+idReponseBonus).val() != '')) {
+                reponseBonusData = new FormData();
+                reponseBonusData.append('idReponseBonus', idReponseBonus);
+                reponseBonusData.append('Type', $('#Type'+idReponseBonus).val());
+                reponseBonusData.append('Bonus', $('#Bonus'+idReponseBonus).val());
+                reponseBonusData.append('designation', $('#designation'+idReponseBonus).val());
+                reponseBonusData.append('note', $('#note'+idReponseBonus).val());
+                if($("#image"+idReponseBonus)[0].files.length != 0){
+                    reponseBonusData.append('image', $('#image'+idReponseBonus)[0].files[0]);
+                }
+                //Ajax delete ReponseBonus
+                let url = "{{ path('app_admin_reponse_bonus_edit') }}";
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: reponseBonusData,
+                    dataType: 'json',
+                    mimeType: 'multipart/form-data',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    error: function(e) {
+                    },
+                    /*beforeSend : function(){
+                        $("#loadMe").modal({
+                            backdrop: "static", //remove ability to close modal with click
+                            keyboard: false, //remove option to close with keyboard
+                            show: true //Display loader!
+                        });
+                    },*/
+                    success: function(data)  {
+                        $("#editReponseBonusModal"+idReponseBonus).modal('hide');
+                        $("#info").show("slow").delay(3000).slideUp("slow");
+                        $("#msg").html(data.info);
+                        viewReponseBonus();
+                    }/*,
+                    complete: function(){
+                        $("#loadMe").modal("hide");
+                    }*/
+                });
+            }
+        }
+        function deleteReponseBonus(idReponseBonus){
+            reponseBonusData = new FormData();
+            reponseBonusData.append('idReponseBonus', idReponseBonus);
+            //Ajax delete Reponse
+            let url = "{{ path('app_admin_reponse_bonus_delete') }}";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: reponseBonusData,
+                dataType: 'json',
+                mimeType: 'multipart/form-data',
+                contentType: false,
+                cache: false,
+                processData: false,
+                error: function(e) {
+                },
+                /*beforeSend : function(){
+                    $("#loadMe").modal({
+                        backdrop: "static", //remove ability to close modal with click
+                        keyboard: false, //remove option to close with keyboard
+                        show: true //Display loader!
+                    });
+                },*/
+                success: function(data)  {
+                    $("#deleteReponseBonusModal"+idReponseBonus).modal('hide');
+                    $("#info").show("slow").delay(3000).slideUp("slow");
+                    $("#msg").html(data.info);
+                    viewReponseBonus();
+                }/*,
+                complete: function(){
+                    $("#loadMe").modal("hide");
+                }*/
+            });
+            //End Ajax delete ReponseBonus
+        }
+        function cancelReponseBonus(){
+            $('#Type').val('');
+            $('#Bonus').val('');
+            $('#designation').val('');
+            $('#note').val('');
+        }
+    </script>
+{% endblock %}

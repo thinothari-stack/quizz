@@ -1,0 +1,30 @@
+<!-- Table with stripped rows -->
+<table class="table datatable">
+<thead>
+    <tr>
+    <th scope="col">#</th>
+    <th scope="col">Nom</th>
+    <th scope="col">email</th>
+    <th scope="col">Avatar</th>
+    <th scope="col">Rôle</th>
+    </tr>
+</thead>
+<tbody>
+    {% for compte in Compte %}
+    <tr>
+    <th scope="row">{% set counter = ( counter | default(0) ) + 1 %}{{ counter }}</th>
+    <td>{{ compte.nom }}</td>
+    <td>{{ compte.email }}</td>
+    <td>{{ compte.avatar }}</td>
+    <td>
+        {% if compte.roles[0] == 'ROLE_ADMIN' %}
+            Administrateur
+        {% else %}
+            Utilisateur simple
+        {% endif %}
+    </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+<!-- End Table with stripped rows -->

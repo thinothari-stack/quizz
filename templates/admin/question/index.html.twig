@@ -1,0 +1,223 @@
+{% extends "admin/index.html.twig" %}
+{% block title %}Question!{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block body %}
+    <div class="pagetitle">
+      <h1>Question(s)</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ path('app_admin') }}">Home</a></li>
+          <li class="breadcrumb-item">Question(s)</li>
+          <li class="breadcrumb-item active">Data</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Liste(s) de(s) Question(s)</h5>
+              <div id="info" style="display: none;" class="alert alert-alt alert-success alert-dismissible hidden" role="alert">
+                 <a class="alert-link" href="javascript:void(0)"><strong>INFO: </strong> <span id="msg"></span></a>
+              </div>
+              <!-- Basic Modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
+                    Ajouter
+                </button>
+                <div class="modal fade" id="addQuestionModal" tabindex="-1">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title">Question</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="row g-3">
+                                <div class="col-12">
+                                    <label for="Type" class="form-label">Type</label>
+                                    <select id="Type" class="form-select" name="Type">
+                                        {% for type in Type %}
+                                            <option value="{{ type.id }}">{{ type.designation }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div id="alert" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez selectionner le type.</a>
+                                    </div>
+                                    <label for="designation" class="form-label">Désignation</label>
+                                    {# <input type="text" class="form-control" id="designation" name="designation"> #}
+                                    <textarea class="form-control" id="designation" name="designation" style="height: 100px;"></textarea>
+                                    <div id="alert2" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la désignation.</a>
+                                    </div>
+                                </div>
+                            </form><!-- Vertical Form -->
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="cancelQuestion()" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary" onclick="addQuestion()">Ajouter</button>
+                        </div>
+                    </div>
+                    </div>
+                </div><!-- End Basic Modal-->
+              <div id="viewQuestion"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/global/vendor/datatables.net/jquery.dataTables.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-bs4/dataTables.bootstrap4.js') }}"></script>
+    <!-- <script src="{{ asset('assets/global/vendor/datatables.net-responsive/dataTables.responsive.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-responsive-bs4/responsive.bootstrap4.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/dataTables.buttons.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.html5.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.flash.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.print.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.colVis.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons-bs4/buttons.bootstrap4.js') }}"></script> -->
+    <script type="text/javascript">
+        viewQuestion();
+        function viewQuestion() {
+            //Ajax get list question
+            $.ajax({
+                type: "GET",
+                url: "{{ path('app_admin_question_list') }}",
+                error: function() {
+                    console.log('Erreur de connexion');
+                },
+                success: function(data)  {
+                    $("#viewQuestion").html(data);
+                }
+            });
+            //End of Ajax
+        }
+        function addQuestion () {
+            if($('#Type').val() == '') {
+                $("#alert").show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#designation').val() == '') {
+                $("#alert2").show("slow").delay(2000).slideUp("slow");
+            }
+            if(($('#Type').val() != '') && ($('#designation').val() != '')) {
+                questionData = new FormData();
+                questionData.append('Type', $('#Type').val());
+                questionData.append('designation', $('#designation').val());
+                //Ajax add Question
+                let url = "{{ path('app_admin_question') }}";
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: questionData,
+                    dataType: 'json',
+                    mimeType: 'multipart/form-data',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    error: function(e) {
+                    },
+                    success: function(data)  {
+                        $("#addQuestionModal").modal('hide');
+                        $("#info").show("slow").delay(3000).slideUp("slow");
+                        $("#msg").html(data.info);
+                        viewQuestion();
+                        cancelQuestion();
+                    }
+                });
+                //End Ajax add Question
+            }
+        }
+        function editQuestion(idQuestion){
+            if($('#Type'+idQuestion).val() == '') {
+                $("#alert"+idQuestion).show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#designation'+idQuestion).val() == '') {
+                $("#alert2"+idQuestion).show("slow").delay(2000).slideUp("slow");
+            }
+            if(($('#Type'+idQuestion).val() != '') && ($('#designation'+idQuestion).val() != '')) {
+                questionData = new FormData();
+                questionData.append('idQuestion', idQuestion);
+                questionData.append('Type', $('#Type'+idQuestion).val());
+                questionData.append('designation', $('#designation'+idQuestion).val());
+                //Ajax delete Question
+                let url = "{{ path('app_admin_question_edit') }}";
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: questionData,
+                    dataType: 'json',
+                    mimeType: 'multipart/form-data',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    error: function(e) {
+                    },
+                    /*beforeSend : function(){
+                        $("#loadMe").modal({
+                            backdrop: "static", //remove ability to close modal with click
+                            keyboard: false, //remove option to close with keyboard
+                            show: true //Display loader!
+                        });
+                    },*/
+                    success: function(data)  {
+                        $("#editQuestionModal"+idQuestion).modal('hide');
+                        $("#info").show("slow").delay(3000).slideUp("slow");
+                        $("#msg").html(data.info);
+                        viewQuestion();
+                    }/*,
+                    complete: function(){
+                        $("#loadMe").modal("hide");
+                    }*/
+                });
+            }
+        }
+        function deleteQuestion(idQuestion){
+            questionData = new FormData();
+            questionData.append('idQuestion', idQuestion);
+            //Ajax delete Question
+            let url = "{{ path('app_admin_question_delete') }}";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: questionData,
+                dataType: 'json',
+                mimeType: 'multipart/form-data',
+                contentType: false,
+                cache: false,
+                processData: false,
+                error: function(e) {
+                },
+                /*beforeSend : function(){
+                    $("#loadMe").modal({
+                        backdrop: "static", //remove ability to close modal with click
+                        keyboard: false, //remove option to close with keyboard
+                        show: true //Display loader!
+                    });
+                },*/
+                success: function(data)  {
+                    $("#deleteQuestionModal"+idQuestion).modal('hide');
+                    $("#info").show("slow").delay(3000).slideUp("slow");
+                    $("#msg").html(data.info);
+                    viewQuestion();
+                }/*,
+                complete: function(){
+                    $("#loadMe").modal("hide");
+                }*/
+            });
+            //End Ajax delete Question
+        }
+        function cancelQuestion(){
+            $('#designation').val('');
+        }
+    </script>
+{% endblock %}

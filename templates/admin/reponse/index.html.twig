@@ -1,0 +1,286 @@
+{% extends "admin/index.html.twig" %}
+{% block title %}Réponse!{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        #image-preview{
+            height:200px;
+            width:auto;
+            max-width: 300px;
+            max-height: 200px;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="pagetitle">
+      <h1>Réponse(s)</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ path('app_admin') }}">Home</a></li>
+          <li class="breadcrumb-item">Réponse(s)</li>
+          <li class="breadcrumb-item active">Data</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Liste(s) de(s) Réponse(s)</h5>
+              <div id="info" style="display: none;" class="alert alert-alt alert-success alert-dismissible hidden" role="alert">
+                 <a class="alert-link" href="javascript:void(0)"><strong>INFO: </strong> <span id="msg"></span></a>
+              </div>
+              <!-- Basic Modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReponseModal">
+                    Ajouter
+                </button>
+                <div class="modal fade" id="addReponseModal" tabindex="-1">
+                    <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title">Reponse</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="row g-3">
+                                <div class="col-12">
+                                    <label for="Question" class="form-label">Question</label>
+                                    <select id="Question" class="form-select" name="Question">
+                                        {% for question in Question %}
+                                            <option value="{{ question.id }}">{{ question.designation }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div id="alert" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez selectionner la question.</a>
+                                    </div>
+                                    <label for="designation" class="form-label">Désignation</label>
+                                    {# <input type="text" class="form-control" id="designation" name="designation"> #}
+                                    <textarea class="form-control" id="designation" name="designation" style="height: 100px;"></textarea>
+                                    <div id="alert2" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la désignation.</a>
+                                    </div>
+                                    <label for="note" class="form-label">Note</label>
+                                    <input type="text" class="form-control" id="note" name="note">
+                                    <div id="alert3" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                        <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la note.</a>
+                                    </div>
+                                    <label for="image" class="form-label">Image</label>
+                                    <input type="file" accept="image/*" id="image" class="form-control" name="image">
+                                    <div id='img_contain'>
+                                        <img id="image-preview" align='middle'src="" alt="" title=''/>
+                                    </div>
+                                </div>
+                            </form><!-- Vertical Form -->
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="cancelReponse()" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-primary" onclick="addReponse()">Ajouter</button>
+                        </div>
+                    </div>
+                    </div>
+                </div><!-- End Basic Modal-->
+              <div id="viewReponse"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/global/vendor/datatables.net/jquery.dataTables.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-bs4/dataTables.bootstrap4.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-responsive/dataTables.responsive.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-responsive-bs4/responsive.bootstrap4.js') }}"></script>
+    <!-- <script src="{{ asset('assets/global/vendor/datatables.net-buttons/dataTables.buttons.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.html5.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.flash.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.print.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons/buttons.colVis.js') }}"></script>
+    <script src="{{ asset('assets/global/vendor/datatables.net-buttons-bs4/buttons.bootstrap4.js') }}"></script> -->
+    <script type="text/javascript">
+        viewReponse();
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                $('#image-preview').attr('src', e.target.result);
+                $('#image-preview').hide();
+                $('#image-preview').fadeIn(650);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        function readURLDetail(input, str) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                $('#image-preview'+str).attr('src', e.target.result);
+                $('#image-preview'+str).hide();
+                $('#image-preview'+str).fadeIn(650);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $("#image").change(function() {
+            readURL(this);
+        });
+        function viewReponse() {
+            //Ajax get list Reponse
+            $.ajax({
+                type: "GET",
+                url: "{{ path('app_admin_reponse_list') }}",
+                error: function() {
+                    console.log('Erreur de connexion');
+                },
+                success: function(data)  {
+                    $("#viewReponse").html(data);
+                }
+            });
+            //End of Ajax
+        }
+        function addReponse () {
+            if($('#Question').val() == '') {
+                $("#alert").show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#designation').val() == '') {
+                $("#alert2").show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#note').val() == '') {
+                $("#alert3").show("slow").delay(2000).slideUp("slow");
+            }
+            if(($('#Question').val() != '') && ($('#designation').val() != '') && ($('#note').val() != '')) {
+                reponseData = new FormData();
+                reponseData.append('Question', $('#Question').val());
+                reponseData.append('designation', $('#designation').val());
+                reponseData.append('note', $('#note').val());
+                if($("#image")[0].files.length != 0){
+                    reponseData.append('image', $('#image')[0].files[0]);
+                }
+                //Ajax add Reponse
+                let url = "{{ path('app_admin_reponse') }}";
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: reponseData,
+                    dataType: 'json',
+                    mimeType: 'multipart/form-data',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    error: function(e) {
+                    },
+                    success: function(data)  {
+                        $("#addReponseModal").modal('hide');
+                        $("#info").show("slow").delay(3000).slideUp("slow");
+                        $("#msg").html(data.info);
+                        viewReponse();
+                        cancelReponse();
+                    }
+                });
+                //End Ajax add Reponse
+            }
+        }
+        function detailReponse(idReponse){
+            $("#image"+idReponse).change(function() {
+                readURLDetail(this, idReponse);
+            });
+            $("#image-preview"+idReponse).css({"height":"200px","width":"auto","max-height":"200px","max-width":"300px"});
+        }
+        function editReponse(idReponse){
+            if($('#Question'+idReponse).val() == '') {
+                $("#alert"+idReponse).show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#designation'+idReponse).val() == '') {
+                $("#alert2"+idReponse).show("slow").delay(2000).slideUp("slow");
+            }
+            if($('#note'+idReponse).val() == '') {
+                $("#alert3"+idReponse).show("slow").delay(2000).slideUp("slow");
+            }
+            if(($('#Question'+idReponse).val() != '') && ($('#designation'+idReponse).val() != '') && ($('#note'+idReponse).val() != '')) {
+                reponseData = new FormData();
+                reponseData.append('idReponse', idReponse);
+                reponseData.append('Question', $('#Question'+idReponse).val());
+                reponseData.append('designation', $('#designation'+idReponse).val());
+                reponseData.append('note', $('#note'+idReponse).val());
+                if($("#image"+idReponse)[0].files.length != 0){
+                    reponseData.append('image', $('#image'+idReponse)[0].files[0]);
+                }   
+                //Ajax delete Reponse
+                let url = "{{ path('app_admin_reponse_edit') }}";
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: reponseData,
+                    dataType: 'json',
+                    mimeType: 'multipart/form-data',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    error: function(e) {
+                    },
+                    /*beforeSend : function(){
+                        $("#loadMe").modal({
+                            backdrop: "static", //remove ability to close modal with click
+                            keyboard: false, //remove option to close with keyboard
+                            show: true //Display loader!
+                        });
+                    },*/
+                    success: function(data)  {
+                        $("#editReponseModal"+idReponse).modal('hide');
+                        $("#info").show("slow").delay(3000).slideUp("slow");
+                        $("#msg").html(data.info);
+                        viewReponse();
+                    }/*,
+                    complete: function(){
+                        $("#loadMe").modal("hide");
+                    }*/
+                });
+            }
+        }
+        function deleteReponse(idReponse){
+            reponseData = new FormData();
+            reponseData.append('idReponse', idReponse);
+            //Ajax delete Reponse
+            let url = "{{ path('app_admin_reponse_delete') }}";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: reponseData,
+                dataType: 'json',
+                mimeType: 'multipart/form-data',
+                contentType: false,
+                cache: false,
+                processData: false,
+                error: function(e) {
+                },
+                /*beforeSend : function(){
+                    $("#loadMe").modal({
+                        backdrop: "static", //remove ability to close modal with click
+                        keyboard: false, //remove option to close with keyboard
+                        show: true //Display loader!
+                    });
+                },*/
+                success: function(data)  {
+                    $("#deleteReponseModal"+idReponse).modal('hide');
+                    $("#info").show("slow").delay(3000).slideUp("slow");
+                    $("#msg").html(data.info);
+                    viewReponse();
+                }/*,
+                complete: function(){
+                    $("#loadMe").modal("hide");
+                }*/
+            });
+            //End Ajax delete Reponse
+        }
+        function cancelReponse(){
+            $('#designation').val('');
+        }
+    </script>
+{% endblock %}

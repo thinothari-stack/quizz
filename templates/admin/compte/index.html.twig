@@ -1,0 +1,49 @@
+{% extends "admin/index.html.twig" %}
+{% block body %}
+    <div class="pagetitle">
+      <h1>Compte(s)</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{{ path('app_admin') }}">Home</a></li>
+          <li class="breadcrumb-item">Compte(s)</li>
+          <li class="breadcrumb-item active">Data</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Liste(s) de(s) compte(s)</h5>
+              <div id="viewCompte"></div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript">
+        console.log('test');
+        viewCompte();
+        function viewCompte() {
+            //Ajax get list account
+            $.ajax({
+                type: "GET",
+                url: "{{ path('app_admin_compte_list') }}",
+                error: function() {
+                    console.log('Erreur de connexion');
+                },
+                success: function(data)  {
+                    $("#viewCompte").html(data);
+                }
+            });
+            //End of Ajax
+        }
+    </script>
+{% endblock %}

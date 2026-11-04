@@ -1,0 +1,148 @@
+<!-- Table with stripped rows -->
+<table id="reponseTable" class="table datatable">
+<thead>
+    <tr>
+    <th scope="col">#</th>
+    <th scope="col">Question</th>
+    <th scope="col">Désignation</th>
+    <th scope="col">Note</th>
+    <th scope="col">Action</th>
+    </tr>
+</thead>
+<tbody>
+    {% for reponse in Reponse %}
+    <tr>
+    <th scope="row">{% set counter = ( counter | default(0) ) + 1 %}{{ counter }}</th>
+    <td>{{ reponse.question.designation }}</td>
+    <td>{{ reponse.designation }}</td>
+    <td>{{ reponse.note }}</td>
+    <td>
+        <button type="button" onclick="detailReponse('{{ reponse.id }}')" data-bs-target="#editReponseModal{{ reponse.id }}" data-bs-toggle="modal" class="btn btn-sm btn-warning">
+            <i class="bi bi-pencil" aria-hidden="true"></i>
+        </button>
+        <div class="modal fade" id="editReponseModal{{ reponse.id }}" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Edition</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3">
+                        <div class="col-12">
+                            <label for="Question{{ reponse.id }}" class="form-label">Question</label>
+                            <select id="Question{{ reponse.id }}" class="form-select" name="Question">
+                                <option value="{{ reponse.question.id }}">{{ reponse.question.designation }}({{ reponse.question.type.designation }})</option>
+                                {% for question in Question %}
+                                    <option value="{{ question.id }}">{{ question.designation }}({{ question.type.designation }})</option>
+                                {% endfor %}
+                            </select>
+                            <div id="alert{{ reponse.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez selectionner la question.</a>
+                            </div>
+                            <label for="designation{{ reponse.id }}" class="form-label">Désignation</label>
+                            {# <input type="text" class="form-control" id="designation{{ reponse.id }}" name="designation" value="{{ reponse.designation }}"> #}
+                            <textarea class="form-control" id="designation{{ reponse.id }}" name="designation" style="height: 100px;">{{ reponse.designation }}</textarea>
+                            <div id="alert2{{ reponse.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la désignation.</a>
+                            </div>
+                            <label for="note{{ reponse.id }}" class="form-label">Note</label>
+                            <input type="text" class="form-control" id="note{{ reponse.id }}" name="note" value="{{ reponse.note }}">
+                            <div id="alert3{{ reponse.id }}" style="display: none;" class="alert alert-alt alert-danger alert-dismissible hidden" role="alert">
+                                <a class="alert-link" href="javascript:void(0)"><strong>INFO : </strong>Veuillez remplir la note.</a>
+                            </div>
+                            <label for="image" class="form-label">Image</label>
+                            <input type="file" accept="image/*" id="image{{ reponse.id }}" class="form-control" name="image" value="{{ reponse.image }}">
+                            <div id='img_contain{{ reponse.id }}'>
+                                <img id="image-preview{{ reponse.id }}" align='middle'src="{{ asset('reponse') }}/{{ reponse.image }}" alt="" title=''/>
+                            </div>
+                        </div>
+                    </form><!-- Vertical Form -->
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="editReponse('{{ reponse.id }}')">Editer</button>
+                </div>
+            </div>
+            </div>
+        </div><!-- End Basic Modal-->
+        <button type="button" data-bs-target="#deleteReponseModal{{ reponse.id }}" data-bs-toggle="modal" class="btn btn-sm btn-danger">
+            <i class="bi bi-trash" aria-hidden="true"></i>
+        </button>
+        <div class="modal fade" id="deleteReponseModal{{ reponse.id }}" tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p><i class="bi bi-exclamation-triangle" aria-hidden="true" style="font-size: 64px; color: orange"></i></p>
+                    <h3>Vous êtes sur ?</h3>
+                    <p>La suppression sera irréversible!</p>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <button type="button" class="btn btn-primary" onclick="deleteReponse('{{ reponse.id }}')">Oui</button>
+                </div>
+            </div>
+            </div>
+        </div><!-- End Basic Modal-->
+    </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% block javascripts %}
+<script type="text/javascript">
+    var reponseTable = $('#reponseTable').DataTable({
+        "ordering": false,
+        "order": [[ 0, "asc" ]],
+        "lengthMenu": [[10, 15, 20, -1], [10, 15, 20, "All"]],
+        responsive: true,
+        dom: 'Bfrtip',
+        // buttons: [
+        //     {
+        //         extend: 'pdfHtml5',
+        //         text: '<i class="icon wb-download" aria-hidden="true"></i> Export en PDF de(s) réponse(s)',
+        //         title: 'Export de(s) réponse(s)',
+        //         orientation: 'landscape',
+        //         pageSize: 'LEGAL',
+        //         exportOptions: {
+        //             columns: [0, 1, 2, 3]
+        //         }
+        //         ,
+        //         //-------------------------- 
+        //         customize : function(doc) {
+        //             doc.styles['td:nth-child(2)'] = { 
+        //             width: '200px',
+        //             'max-width': '200px'
+        //             }
+        //         }
+        //     },
+        //     { 
+        //         extend: 'excel', 
+        //         text: '<i class="icon wb-download" aria-hidden="true"></i> Export en Excel de(s) réponse(s)', 
+        //         title: 'Export de(s) réponse(s)',
+        //         exportOptions: {
+        //             columns: [0, 1, 2, 3]
+        //         }
+        //     }
+        // ],
+        language: {
+            lengthMenu: "_MENU_",
+            zeroRecords: "Aucun résultat",
+            info: "page _PAGE_ à _PAGES_",
+            infoEmpty: "Pas de réponse",
+            infoFiltered: "(filtré à partir de _MAX_ enregistrement(s) au total)",
+            search: "_INPUT_",
+            searchPlaceholder: "Recherche",
+            paginate: {
+                "previous": "Précedent",
+                "next": "Suivant"
+            }
+        }
+    });
+</script>
+{% endblock %}
+<!-- End Table with stripped rows -->

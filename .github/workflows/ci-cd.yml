@@ -58,6 +58,9 @@ jobs:
       - name: Validate Composer files
         run: composer validate --no-check-publish
 
+      - name: Prepare non-secret environment defaults
+        run: cp .env.example .env
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction
 

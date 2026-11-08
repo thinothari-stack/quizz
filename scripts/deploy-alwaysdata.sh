@@ -50,6 +50,7 @@ tar \
     --exclude='./.github' \
     --exclude='./.env' \
     --exclude='./.env.*' \
+    --exclude='./.env.save' \
     --exclude='./var' \
     --exclude='./tests' \
     --exclude='./phpunit.xml.dist' \
@@ -77,6 +78,7 @@ mkdir -p "$release_path"
 tar -xzf "$archive_path" -C "$release_path"
 rm "$archive_path"
 
+printf 'APP_ENV=prod\nAPP_DEBUG=0\n' > "$release_path/.env"
 ln -s "$shared_path/.env.local" "$release_path/.env.local"
 mkdir -p "$shared_path/var/log" "$release_path/var/cache"
 ln -s "$shared_path/var/log" "$release_path/var/log"

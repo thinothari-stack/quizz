@@ -33,7 +33,8 @@ RUN composer install \
 COPY . .
 COPY docker/apache-vhost.conf /etc/apache2/sites-available/000-default.conf
 
-RUN composer dump-autoload --classmap-authoritative --no-dev --no-scripts \
+RUN printf 'APP_ENV=prod\nAPP_DEBUG=0\n' > .env \
+    && composer dump-autoload --classmap-authoritative --no-dev --no-scripts \
     && mkdir -p var/cache var/log public/profil public/type public/reponse public/reponse_bonus \
     && chown -R www-data:www-data var public/profil public/type public/reponse public/reponse_bonus
 

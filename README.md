@@ -82,8 +82,10 @@ that password variable, no administrator account is seeded.
 
 The `CI and deployment` workflow runs Composer validation, Symfony linting,
 PHPUnit, and PostgreSQL migration/schema checks on each pull request to `main`.
-Pull requests build the Docker image but do not publish it. Merges to `main`
-publish `ghcr.io/thinothari-stack/quizz` to GitHub Container Registry.
+Pull requests also build the Docker image without publishing it. After a
+successful push or merge to `main`, the image is published to
+`ghcr.io/thinothari-stack/quizz`; the PHP site is deployed over SSH only when
+the production deployment switch and GitHub credentials are configured.
 
 To run the application locally in Docker, copy `.env.example` to `.env`, set a
 unique `APP_SECRET`, then run:

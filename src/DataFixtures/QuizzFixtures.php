@@ -14,8 +14,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class QuizzFixtures extends Fixture
 {
-
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
 
         $type1 = new Type();
@@ -288,13 +287,20 @@ class QuizzFixtures extends Fixture
         $reponseBonus->setNote(0);
         $manager->persist($reponseBonus);
 
-        $compte = new Compte();
-        $compte->setNom('RAKOTOHARINIAINA Thinot');
-        $compte->setEmail('thinothariniaina@gmail.com');
-        $compte->setRoles(['ROLE_ADMIN']);
-        $compte->setUsername('Thinot');
-        $compte->setPassword('Thinot');
-        $manager->persist($compte);
+        $adminPassword = $_SERVER['QUIZZ_ADMIN_PASSWORD'] ?? $_ENV['QUIZZ_ADMIN_PASSWORD'] ?? null;
+        if (is_string($adminPassword) && $adminPassword !== '') {
+            $compte = new Compte();
+            $compte->setNom($_SERVER['QUIZZ_ADMIN_NAME'] ?? $_ENV['QUIZZ_ADMIN_NAME'] ?? 'Administrator');
+            $compte->setEmail($_SERVER['QUIZZ_ADMIN_EMAIL'] ?? $_ENV['QUIZZ_ADMIN_EMAIL'] ?? 'admin@example.test');
+            $compte->setRoles(['ROLE_ADMIN']);
+            $compte->setUsername($_SERVER['QUIZZ_ADMIN_USERNAME'] ?? $_ENV['QUIZZ_ADMIN_USERNAME'] ?? 'admin');
+            $hashedPassword = password_hash($adminPassword, PASSWORD_DEFAULT);
+            if ($hashedPassword === false) {
+                throw new \RuntimeException('Unable to hash the configured quiz administrator password.');
+            }
+            $compte->setPassword($hashedPassword);
+            $manager->persist($compte);
+        }
 
         $manager->flush();
     }

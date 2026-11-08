@@ -1,0 +1,176 @@
+name: CI and deployment
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quizz-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests and database checks
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: quizz
+          POSTGRES_USER: quizz
+          POSTGRES_PASSWORD: quizz
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U quizz -d quizz"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_ENV: test
+      APP_DEBUG: "0"
+      APP_SECRET: github-actions-test-secret
+      DATABASE_URL: "postgresql://quizz:quizz@127.0.0.1:5432/quizz?serverVersion=16&charset=utf8"
+      MAILER_DSN: "null://null"
+      MAILER_FROM: "no-reply@example.test"
+      MESSENGER_TRANSPORT_DSN: "doctrine://default?auto_setup=0"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: dom, gd, intl, pdo_pgsql, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate Composer files
+        run: composer validate --no-check-publish
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Lint YAML and Twig
+        run: |
+          php bin/console lint:yaml config
+          php bin/console lint:twig templates
+
+      - name: Validate Symfony services
+        run: php bin/console lint:container --no-interaction
+
+      - name: Run database migrations
+        run: php bin/console doctrine:migrations:migrate --no-interaction
+
+      - name: Validate PostgreSQL schema
+        run: php bin/console doctrine:schema:validate --no-interaction
+
+      - name: Run PHPUnit
+        run: php bin/phpunit
+
+  container:
+    name: Build and publish Docker image
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create image tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-alwaysdata:
+    name: Deploy PHP application to Alwaysdata
+    needs:
+      - test
+      - container
+    if: >-
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      github.ref == 'refs/heads/main' &&
+      vars.ALWAYSDATA_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: dom, gd, intl, pdo_pgsql, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Install production dependencies
+        run: composer install --no-dev --prefer-dist --no-interaction --no-scripts
+
+      - name: Deploy release over SSH
+        env:
+          ALWAYSDATA_HOST: ${{ vars.ALWAYSDATA_HOST }}
+          ALWAYSDATA_USER: ${{ vars.ALWAYSDATA_USER }}
+          ALWAYSDATA_DEPLOY_PATH: ${{ vars.ALWAYSDATA_DEPLOY_PATH }}
+          ALWAYSDATA_KNOWN_HOSTS: ${{ vars.ALWAYSDATA_KNOWN_HOSTS }}
+          ALWAYSDATA_URL: ${{ vars.ALWAYSDATA_URL }}
+          ALWAYSDATA_SSH_KEY: ${{ secrets.ALWAYSDATA_SSH_KEY }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: bash scripts/deploy-alwaysdata.sh
+
+      - name: Verify the deployed website
+        env:
+          ALWAYSDATA_URL: ${{ vars.ALWAYSDATA_URL }}
+        run: |
+          if [ -z "$ALWAYSDATA_URL" ]; then
+            echo "Set ALWAYSDATA_URL in the production environment."
+            exit 1
+          fi
+          response_file="$RUNNER_TEMP/alwaysdata-health-check.html"
+          curl --fail --show-error --silent --location \
+            --retry 12 --retry-delay 5 --retry-connrefused \
+            --max-time 15 --output "$response_file" "$ALWAYSDATA_URL"
+          if grep -qi "This website is hosted by.*alwaysdata" "$response_file"; then
+            echo "The domain is still serving Alwaysdata's default placeholder page."
+            exit 1
+          fi

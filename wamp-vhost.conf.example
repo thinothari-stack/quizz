@@ -1,0 +1,10 @@
+<VirtualHost *:80>
+    ServerName quizz.test
+    DocumentRoot "E:/quizz/public"
+
+    <Directory "E:/quizz/public/">
+        Options FollowSymLinks
+        AllowOverride All
+        Require local
+    </Directory>
+</VirtualHost>

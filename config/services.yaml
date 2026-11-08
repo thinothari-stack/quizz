@@ -4,6 +4,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app_mailer_from_default: 'no-reply@example.test'
+    app_mailer_from: '%env(default:app_mailer_from_default:MAILER_FROM)%'
 
 services:
     # default configuration for services in *this* file
@@ -29,4 +31,5 @@ services:
 
     App\Service\Mailer:
         arguments:
-            - '@mailer'
+            $mailer: '@mailer'
+            $senderEmail: '%app_mailer_from%'

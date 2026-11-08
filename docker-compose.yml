@@ -1,21 +1,45 @@
-version: '3'
-
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-15}-alpine
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8080:80"
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      APP_SECRET: "${APP_SECRET:?Set APP_SECRET in .env}"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-quizz}:${POSTGRES_PASSWORD:-change-me}@database:5432/${POSTGRES_DB:-quizz}?serverVersion=${POSTGRES_VERSION:-16}&charset=utf8"
+      MAILER_DSN: "${MAILER_DSN:-null://null}"
+      MAILER_FROM: "${MAILER_FROM:-no-reply@example.test}"
+      MESSENGER_TRANSPORT_DSN: "doctrine://default?auto_setup=0"
+      WKHTMLTOPDF_PATH: "/usr/bin/wkhtmltopdf"
+    depends_on:
+      database:
+        condition: service_healthy
     volumes:
-      - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - quiz_profil:/var/www/html/public/profil
+      - quiz_type:/var/www/html/public/type
+      - quiz_reponse:/var/www/html/public/reponse
+      - quiz_reponse_bonus:/var/www/html/public/reponse_bonus
+
+  database:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-quizz}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-change-me}"
+      POSTGRES_USER: "${POSTGRES_USER:-quizz}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - database_data:/var/lib/postgresql/data
 
 volumes:
-###> doctrine/doctrine-bundle ###
   database_data:
-###< doctrine/doctrine-bundle ###
+  quiz_profil:
+  quiz_type:
+  quiz_reponse:
+  quiz_reponse_bonus:

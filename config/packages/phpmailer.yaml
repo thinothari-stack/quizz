@@ -1,3 +1,0 @@
-services:
-    PHPMailer\PHPMailer\PHPMailer:
-        arguments: ['@mailer']

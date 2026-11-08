@@ -7,12 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 use DateTime;
 
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=CompteRepository::class)
  */
-class Compte implements UserInterface
+class Compte implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
@@ -118,9 +119,9 @@ class Compte implements UserInterface
         return $this;
     }
 
-    public function getRoles(): ?array
+    public function getRoles(): array
     {
-        return $this->roles;
+        return $this->roles ?? [];
     }
 
     public function setRoles(?array $roles): self

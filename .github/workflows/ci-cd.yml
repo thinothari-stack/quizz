@@ -25,13 +25,13 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_DB: quizz
+          POSTGRES_DB: quizz_test
           POSTGRES_USER: quizz
           POSTGRES_PASSWORD: quizz
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U quizz -d quizz"
+          --health-cmd "pg_isready -U quizz -d quizz_test"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
